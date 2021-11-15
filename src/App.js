@@ -2,9 +2,15 @@ import React from 'react';
 import SignIn from './components/sign_in/Index';
 import Dashboard from "./components/dashboard/index";
 import Signup from './components/register-teacher/index';
+import Table from './components/dashboard/tableCompnet/Index';
 
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+
 
 
 import './App.css';
@@ -26,6 +32,10 @@ function App() {
 
           <Route path="/register_teacher">
             <Signup/>
+          </Route>
+
+          <Route path="/teble">
+            <Table/>
           </Route>
           
         </Switch>

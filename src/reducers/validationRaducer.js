@@ -15,5 +15,4 @@ export default function validationRaducer(validationRaducer ={},action ){
             return { ...validationRaducer }
           }
     }
-
 }

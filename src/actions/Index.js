@@ -48,14 +48,14 @@ export const login = (user, cb) => (dispatch) => {
     });
 };
 
-export const emailValidation = (email, cb) => (dispatch) => {
+export const emailValidation = (email, emailCb) => (dispatch) => {
   
   const head = {
     Accept: "application/json",
   };
 
   axios
-    .post(`${"https://backend.mymots.com/api/validateUserEmail"}`, email, cb, {
+    .post(`${"https://backend.mymots.com/api/validateUserEmail"}`, email, emailCb, {
       headers: head,
     })
 
@@ -67,7 +67,7 @@ export const emailValidation = (email, cb) => (dispatch) => {
             email_veryfaid : res.data.result,
           },
         });
-        cb(res);
+        emailCb(res);
       } else {
         dispatch({
           type: "EMAIL_VALIDATION_FAILED",
@@ -75,7 +75,7 @@ export const emailValidation = (email, cb) => (dispatch) => {
             email_veryfaid : false,
           },
         }); 
-      
+        emailCb(res);
       }
     })
     .catch((err) => {
@@ -94,7 +94,7 @@ export const emailValidation = (email, cb) => (dispatch) => {
 
 };
 
-export const otpRequest = (connect) => (dispatch) => {
+export const otpRequest = (connect ,handleOtpCb) => (dispatch) => {
 
   const head = {
     Accept: "application/json",
@@ -114,7 +114,7 @@ export const otpRequest = (connect) => (dispatch) => {
             otp_status : res.data.result,
           },
         });
-       
+        handleOtpCb(res); 
       } else {
         dispatch({
           type: "OTP_FAILED",
@@ -185,9 +185,6 @@ export const otpValidation = (otpObj,cbTwo) => (dispatch) => {
    
 
 };
-
-
-
 
 
 export const createTeacher = (teacherData,thirdCb) => (dispatch) => {

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
-// import validator from "validator";
+import validator from "validator";
 import "react-phone-input-2/lib/style.css";
-
 import {
   emailValidation,
   otpRequest,
@@ -12,280 +11,153 @@ import {
 } from "../../actions/Index";
 
 const Signup = () => {
-  const [teacherData, setData] = useState({
-    email: "",
-    first_name: "",
-    last_name: "",
-    password: "",
-    teacher_mobile: "",
-    teacher_referral_code: "Trial30",
-    termsAndCondition: false,
-    timezone: "Asia/Calcutta",
-    type: "teacher",
-  });
-
-  const [otp, setOtp] = useState();
 
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [flag, setflag] = useState(false);
-  const [cnfPass, setPass] = useState({ cnf_password: "" });
+  
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstNameErr, setFirstNameErr] = useState({});
+  const [lastNameErr, setLastNameErr] = useState({});
+  const [passwordErr, setPasswordErr] = useState({});
+  const [cnfPassword, setCnfPassword] = useState("");
+  const [cnfPasswordErr, setCnfPasswordErr] = useState({});
+  const [emailOne, setEmailOne] = useState("");
+  const [emailErr, setEmailErr] = useState({});
+  const [contactNum, setContactNum] = useState("");
+  const [contactNumErr, setContactNumErr] = useState({});
+  const [btnFlag,setBtnFlag]=useState(false);
+  const [otpVal,setOtpVal] = useState('');
+  const [otpFlag,setOtpFlag] = useState(false);
+  const [otpStatus,setOtpStaus] = useState("Veriay Otp");
+  const [emailFalseStatus,setFalseEmailStatus] = useState(false);
+  const [emailTrueStatus,setTrueEmailStatus] = useState(false);
 
-  const [otpStatus, setOtpStatus] = useState("Verify Otp");
-  const [btnFlag, setFlag] = useState(false);
 
-  const [flags, setFlags] = useState({
-    first_name_flag: false,
-    last_name_flag: false,
-    password_1_flag: false,
-    password_2_flag: false,
-    emailw_flag: false,
-    contact_flag: false,
-  });
 
-  const email = { email: teacherData.email };
-  const otpObj = { mobile: teacherData.teacher_mobile, otp };
+  const onSubmit = (e) => { 
+    e.preventDefault();
+    const isValid = formValidation();
+    const teacherData ={
+      email: emailOne,
+      first_name:firstName,
+      last_name:lastName,
+      password: password,
+      teacher_mobile: contactNum,
+      teacher_referral_code: "Trial30",
+      termsAndCondition: false,
+      timezone: "Asia/Calcutta",
+      type: "teacher",
+  }
+    if (isValid) {
+       dispatch(createTeacher(teacherData, thirdCb));
+    }
+  };
 
   const thirdCb = (res) => {
     if (res.data.result) {
       history.push("/dashboard");
     } else {
       history.push("/dashboard");
-      console.log("sumthing went rong");
     }
   };
-
-  const cbTwo = (res) => {
-    setOtpStatus("Otp Verifyed");
-    setFlag(true);
-  };
-
-  const cb = (res) => {
-    setflag(res.data.result);
-  };
-
-  console.log(otpObj);
-
-  const otpValidation1 = () => {
-    dispatch(otpValidation(otpObj, cbTwo));
-  };
-
-  const handleChange = (event) => {
-    setData({ ...teacherData, [event.target.name]: event.target.value });
-  };
-  const handleCnfPassChenge = (event) => {
-    setPass({ ...cnfPass, [event.target.name]: event.target.value });
-    console.log(cnfPass);
-  };
-
-  const otpChenge = (event) => {
-    setOtp({ otp: event.target.value });
-  };
-
-  // const connect = { mobile_number: teacherData.mobile_number };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    if (teacherData.first_name === "") {
-      if (teacherData.last_name === "") {
-        if (teacherData.password === "") {
-          if (cnfPass.cnf_password === "") {
-            if (teacherData.email === "") {
-              if (teacherData.teacher_mobile === "") {
-                setFlags({
-                  ...flags,
-                  first_name_flag: true,
-                  last_name_flag: true,
-                  password_1_flag: true,
-                  password_2_flag: true,
-                  emailw_flag: true,
-                  contact_flag: true,
-                });
-              }
-            } else {
-              setFlags({
-                ...flags,
-                first_name_flag: true,
-                last_name_flag: true,
-                password_1_flag: true,
-                password_2_flag: true,
-              });
-            }
-          } else {
-            setFlags({
-              ...flags,
-              first_name_flag: true,
-              last_name_flag: true,
-              password_1_flag: true,
-            });
-          }
-        } else {
-          setFlags({
-            ...flags,
-            first_name_flag: true,
-            last_name_flag: true,
-          });
-        }
-      } else {
-        setFlags({
-          ...flags,
-          first_name_flag: true,
-        });
-      }
-    } else if (teacherData.last_name === "") {
-      if (teacherData.password === "") {
-        if (cnfPass.cnf_password === "") {
-          if (teacherData.email === "") {
-            if (teacherData.teacher_mobile === "") {
-              setFlags({
-                ...flags,
-
-                last_name_flag: true,
-                password_1_flag: true,
-                password_2_flag: true,
-                emailw_flag: true,
-                contact_flag: true,
-              });
-            } else {
-              setFlags({
-                ...flags,
-
-                last_name_flag: true,
-                password_1_flag: true,
-                password_2_flag: true,
-                emailw_flag: true,
-              });
-            }
-          } else {
-            setFlags({
-              ...flags,
-
-              last_name_flag: true,
-              password_1_flag: true,
-              password_2_flag: true,
-            });
-          }
-        } else {
-          setFlags({
-            ...flags,
-
-            last_name_flag: true,
-            password_1_flag: true,
-          });
-        }
-      } else {
-        setFlags({
-          ...flags,
-          last_name_flag: true,
-        });
-      }
-    } else if (teacherData.password === "") {
-      if (cnfPass.cnf_password === "") {
-        if (teacherData.email === "") {
-          if (teacherData.teacher_mobile === "") {
-            setFlags({
-              ...flags,
-
-              password_1_flag: true,
-              password_2_flag: true,
-              emailw_flag: true,
-              contact_flag: true,
-            });
-          } else {
-            setFlags({
-              ...flags,
-              password_1_flag: true,
-              password_2_flag: true,
-              emailw_flag: true,
-            });
-          }
-        } else {
-          setFlags({
-            ...flags,
-            password_1_flag: true,
-            password_2_flag: true,
-          });
-        }
-      } else {
-        setFlags({
-          ...flags,
-
-          password_1_flag: true,
-        });
-      }
-    } else if (cnfPass.cnf_password === "") {
-      if (teacherData.email === "") {
-        if (teacherData.teacher_mobile === "") {
-          setFlags({
-            ...flags,
-
-            password_2_flag: true,
-            emailw_flag: true,
-            contact_flag: true,
-          });
-        } else {
-          setFlags({
-            ...flags,
-            password_2_flag: true,
-            emailw_flag: true,
-          });
-        }
-      } else {
-        setFlags({
-          ...flags,
-
-          password_2_flag: true,
-        });
-      }
-    }
-    else if (teacherData.email === "") {
-      if (teacherData.teacher_mobile === "") {
-        setFlags({
-          ...flags,
-          emailw_flag: true,
-          contact_flag: true,
-        });
-      } else {
-        setFlags({
-          ...flags,
-          contact_flag: true,
-        });
-      }
-    } 
-    else if (teacherData.teacher_mobile === "") {
-      setFlags({
-        ...flags,
-      
-        contact_flag: true,
-      });
-    }
-    else {
-      dispatch(createTeacher(teacherData, thirdCb));
-    }
-
-    
-   
-    
-  };
-
-  const emailChange = (event) => {
-    event.preventDefault();
-    setData({ ...teacherData, [event.target.name]: event.target.value });
-    dispatch(emailValidation(email, cb));
-  };
-
-  const connect = { mobile_number: teacherData.teacher_mobile };
-
-  console.log(teacherData);
 
   const handleOtp = (event) => {
     event.preventDefault();
-    dispatch(otpRequest(connect));
+    const connect = { mobile_number: contactNum };
+    dispatch(otpRequest(connect,handleOtpCb));  
   };
 
+  const handleOtpCb = (res) =>{
+    if(res.data.result){
+      setBtnFlag(true);
+    }
+  }
+
+  const otpVali = (event) => {
+    event.preventDefault();
+    const otpObj = {mobile:contactNum,otp:otpVal}
+    dispatch(otpValidation(otpObj, cbTwo));
+  }
+
+  const cbTwo = (res) => {
+    if(res.data.result){
+      setOtpFlag(true);
+      setOtpStaus("Otp Verifyed");
+    }
+  }
+
+  const emailCb = (res) =>{
+    if(res.data.result){
+      setTrueEmailStatus(true);
+      setFalseEmailStatus(false);
+    }
+    else if(res.data.result===false){
+      setTrueEmailStatus(false);
+      setFalseEmailStatus(true);  
+    }
+  }
+  const formValidation = () => {
+
+    const firstNameErr = {};
+    const lastNameErr = {};
+    const passwordErr = {};
+    const cnfPasswordErr = {};
+    const emailErr = {};
+    const contactNumErr = {};
+
+
+    let isValid = true;
+
+    if (firstName === "") {
+      firstNameErr.firstNameNull = "First Name Requerd";
+      isValid = false;
+    }
+    if (lastName === "") {
+      lastNameErr.lastNameNull = "Last Name Requerd";
+      isValid = false;
+    }
+    if (password === "") {
+      passwordErr.passwordNull = "Password Requerd";
+      isValid = false;
+    }
+    if (cnfPassword === "") {
+      cnfPasswordErr.cnfPasswordNull = "Cnf Password Requerd";
+      isValid = false;
+    }
+    if (emailOne === "") {
+      emailErr.emailNull = "Email Address  Requerd";
+      isValid = false;
+    }
+    if (!validator.isEmail(emailOne)) {
+      emailErr.invalidFormate = "Invalid Email Formate";
+      isValid = false;
+    }
+    if (contactNum === "") {
+      contactNumErr.contactNumberNull = "Contact Number Requred";
+      isValid = false;
+    }
+    if (contactNum.length !== 12) {
+      contactNumErr.contactNumberLen = "12 Digit Requred";
+      isValid = false;
+    }
+
+    setFirstNameErr(firstNameErr);
+    setLastNameErr(lastNameErr);
+    setPasswordErr(passwordErr);
+    setCnfPasswordErr(cnfPasswordErr);
+    setEmailErr(emailErr);
+    setContactNumErr(contactNumErr);
+    return isValid;
+  };
+
+  
+
+  console.log(firstName);
   return (
+
     <div className="page-body">
       <div className="container-xl">
         <div className="page-header d-print-none">
@@ -308,25 +180,32 @@ const Signup = () => {
                   <div className="row">
                     <div className="col-xs-12">
                       <div className="row">
+
+
                         <div className="col-md-6 col-xl-6">
                           <div className="mb-3">
                             <label className="form-label">First Name</label>
                             <input
-                              onChange={handleChange}
                               type="text"
                               className="form-control"
                               name="first_name"
                               placeholder="Enter First Name"
+                              value={firstName}
+                              onChange={(e) => {
+                                setFirstName(e.target.value);
+                              }}
                             ></input>
 
-                            {flags.first_name_flag ? (
-                              <h6
-                                style={{ color: "red" }}
-                                className="form-label-description"
-                              >
-                                Required
-                              </h6>
-                            ) : null}
+                            {Object.keys(firstNameErr).map((key) => {
+                              return (
+                                <h6
+                                  style={{ color: "red" }}
+                                  className="form-label-description"
+                                >
+                                  {firstNameErr[key]}
+                                </h6>
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -335,42 +214,53 @@ const Signup = () => {
                             <label className="form-label">Last Name</label>
 
                             <input
-                              onChange={handleChange}
                               type="text"
                               className="form-control"
                               name="last_name"
                               placeholder="lastName"
+                              value={lastName}
+                              onChange={(e) => {
+                                setLastName(e.target.value);
+                              }}
                             ></input>
-                            {flags.last_name_flag ? (
-                              <h6
-                                style={{ color: "red" }}
-                                className="form-label-description"
-                              >
-                                Required
-                              </h6>
-                            ) : null}
+
+                            {Object.keys(lastNameErr).map((key) => {
+                              return (
+                                <h6
+                                  style={{ color: "red" }}
+                                  className="form-label-description"
+                                >
+                                  {lastNameErr[key]}
+                                </h6>
+                              );
+                            })}
                           </div>
                         </div>
 
                         <div className="col-md-6 col-xl-6">
                           <div className="mb-3">
                             <label className="form-label">Password</label>
-
                             <input
-                              onChange={handleChange}
                               type="password"
                               className="form-control"
                               name="password"
                               placeholder="Enter Password"
+                              value={password}
+                              onChange={(e) => {
+                                setPassword(e.target.value);
+                              }}
                             ></input>
-                            {flags.password_1_flag ? (
-                              <h6
-                                style={{ color: "red" }}
-                                className="form-label-description"
-                              >
-                                Required
-                              </h6>
-                            ) : null}
+
+                            {Object.keys(passwordErr).map((key) => {
+                              return (
+                                <h6
+                                  style={{ color: "red" }}
+                                  className="form-label-description"
+                                >
+                                  {passwordErr[key]}
+                                </h6>
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -380,21 +270,29 @@ const Signup = () => {
                               Conforim Password
                             </label>
                             <input
-                              onChange={handleCnfPassChenge}
                               type="password"
                               className="form-control"
                               name="cnf_password"
                               placeholder="Enter Password"
+                              value={cnfPassword}
+                              onChange={(e) => {
+                                setCnfPassword(e.target.value);
+                              }}
                             ></input>
 
-                            {flags.password_2_flag ? (
-                              <h6
-                                style={{ color: "red" }}
-                                className="form-label-description"
-                              >
-                                Required
-                              </h6>
-                            ) : null}
+                            {Object.keys(cnfPasswordErr).map((key) => {
+                              return (
+                                <h6
+                                  style={{ color: "red" }}
+                                  className="form-label-description"
+                                >
+                                  {cnfPasswordErr[key]}
+                                </h6>
+                              );
+                            })}
+
+
+
                           </div>
                         </div>
 
@@ -402,49 +300,75 @@ const Signup = () => {
                           <label className="form-label">Email address</label>
                           <div>
                             <input
-                              onChange={emailChange}
+                              // onChange={emailChange}
                               name="email"
                               type="email"
                               className="form-control"
                               aria-describedby="emailHelp"
                               placeholder="Enter email"
+                              value={emailOne}
+                              onChange={(e) => {
+                                e.preventDefault();
+                                setEmailOne(e.target.value);
+                                const emailObj ={email:emailOne};
+                                dispatch(emailValidation(emailObj, emailCb));
+                              }}
                             />
-                            {flags.emailw_flag ? (
-                              <h6
-                                style={{ color: "red" }}
-                                className="form-label-description"
-                              >
-                                Required
-                              </h6>
-                            ) : null}
 
-                            {flag ? (
+                            {Object.keys(emailErr).map((key) => {
+                              return (
+                                <h6
+                                  style={{ color: "red" }}
+                                  className="form-label-description"
+                                >
+                                  {emailErr[key]}
+                                </h6>
+                              );
+                            })}
+
+                            
+                            {emailTrueStatus ? (
                               <h5 style={{ color: "green" }}>
                                 Sweet! that email id is available
                               </h5>
                             ) : null}
+                            {emailFalseStatus ? (
+                              <h5 style={{ color: "red" }}>
+                                Opps! that email id is't available
+                              </h5>
+                            ) : null}
+                          
                           </div>
                         </div>
 
-                        <div className="col-md-6 col-xl-6">
+                        <div className="col-md-6 col-xl-6 md-2">
                           <label className="form-label">Contact Number</label>
                           <input
                             disabled={btnFlag}
-                            onChange={handleChange}
                             name="teacher_mobile"
                             type="number"
                             className="form-control"
                             aria-describedby="emailHelp"
                             placeholder="Enter Contact Number"
+                            value={contactNum}
+                        
+                            onChange={(e) => {
+                              setContactNum(e.target.value);
+                            }}
                           />
-                          {flags.contact_flag ? (
-                            <h6
-                              style={{ color: "red" }}
-                              className="form-label-description"
-                            >
-                              Required
-                            </h6>
-                          ) : null}
+
+                          {Object.keys(contactNumErr).map((key) => {
+                            return (
+                              <h6
+                                style={{ color: "red" }}
+                                className="form-label-description"
+                              >
+                                {contactNumErr[key]}
+                              </h6>
+                            );
+                          })}
+
+                         
 
                           <div
                             style={{ marginTop: "10px" }}
@@ -461,23 +385,26 @@ const Signup = () => {
                         </div>
 
                         <div className="col-md-6 col-xl-6">
-                          <div className="input-group mb-1">
+                          <div className="input-group mb-2">
                             <input
-                              disabled={btnFlag}
-                              onChange={otpChenge}
+                              disabled={otpFlag}
                               type="text"
                               name="otp"
                               className="form-control"
                               placeholder="Search for…"
+                              value={otpVal}
+                              onChange={(e) => {
+                                setOtpVal(e.target.value);
+                              }}
                             ></input>
 
                             <button
-                              disabled={btnFlag}
-                              onClick={otpValidation1}
+                              disabled={otpFlag}
+                              onClick={otpVali}
                               className="btn"
                               type="button"
                             >
-                              {otpStatus}
+                               {otpStatus}
                             </button>
                           </div>
                         </div>
@@ -488,7 +415,7 @@ const Signup = () => {
                         >
                           <div className="d-flex">
                             <button
-                              onClick={handleSubmit}
+                              onClick={onSubmit}
                               type="submit"
                               className="btn btn-primary ms-auto"
                             >
@@ -496,6 +423,12 @@ const Signup = () => {
                             </button>
                           </div>
                         </div>
+
+
+
+
+
+
                       </div>
                     </div>
                   </div>
@@ -505,6 +438,7 @@ const Signup = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };
